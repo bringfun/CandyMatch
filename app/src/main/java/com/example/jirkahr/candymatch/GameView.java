@@ -230,7 +230,7 @@ public class GameView extends View {
                 }
 
                 if(fieldResource[x][y].isShiftedFlag>0) {
-                    fieldResource[x][y].isShiftedFlag -= 0.02;
+                    fieldResource[x][y].isShiftedFlag -= 0.05;
                     inv = true;
                 }
                 else {
