@@ -223,30 +223,10 @@ public class GameView extends View {
 
     }
 */
-    void shiftThemVertically(int temVertically, int mainx, int mainy) {
-        for(int y = mainy + temVertically - 1; y >=0; y--) {
-            fieldResource[mainx][y].isShiftedFlag += temVertically;
-
-            if(y<fieldResource[mainx][y].isShiftedFlag) {
-                switch(mainx){
-                    case 0: fieldResource[mainx][y].imageId+=1+y;
-                        break;
-                    case 1: fieldResource[mainx][y].imageId+=2+y;
-                        break;
-                    case 2: fieldResource[mainx][y].imageId+=3+y;
-                        break;
-                    case 3: fieldResource[mainx][y].imageId+=4+y;
-                        break;
-                    case 4: fieldResource[mainx][y].imageId+=5+y;
-                        break;
-                    case 5: fieldResource[mainx][y].imageId+=6+y;
-                        break;
-                }
-                fieldResource[mainx][y].imageId %= numberOfIcons;
-            }
-            else {
-                fieldResource[mainx][y].imageId = fieldResource[mainx][y-(int)fieldResource[mainx][y].isShiftedFlag].imageId;
-            }
+    void shiftThemVertically(int temVert, int mainx, int mainy) {
+        for(int y = mainy + temVert - 1; y >=0; y--) {
+            fieldResource[mainx][y].isShiftedFlag += temVert;
+            changeImageId(mainx, y);
         }
     }
 
@@ -254,32 +234,31 @@ public class GameView extends View {
         for(int y = mainy; y >= 0; y--){
             for(int t:temHoriz){
                 fieldResource[mainx + t][y].isShiftedFlag += 1;
-                /*
-                if(fieldResource[mainx + t][y].isShiftedFlag >= 3){
-                    fieldResource[mainx + t][y].isShiftedFlag = 3;
-                }
-                */
-                if(y<fieldResource[mainx + t][y].isShiftedFlag) {
-                    switch(t){
-                        case 0: fieldResource[mainx + t][y].imageId+=1;
-                                break;
-                        case 1: fieldResource[mainx + t][y].imageId+=2;
-                            break;
-                        case 2: fieldResource[mainx + t][y].imageId+=3;
-                            break;
-                        case 3: fieldResource[mainx + t][y].imageId+=4;
-                            break;
-                        case 4: fieldResource[mainx + t][y].imageId+=5;
-                            break;
-                        case 5: fieldResource[mainx + t][y].imageId+=6;
-                            break;
-                    }
-                    fieldResource[mainx + t][y].imageId %= numberOfIcons;
-                }
-                else {
-                    fieldResource[mainx + t][y].imageId = fieldResource[mainx + t][y-(int)fieldResource[mainx + t][y].isShiftedFlag].imageId;
-                }
+                changeImageId(mainx + t, y);
             }
+        }
+    }
+
+    void changeImageId(int x, int y) {
+        if(y<fieldResource[x][y].isShiftedFlag) {
+            switch(x){
+                case 0: fieldResource[x][y].imageId+=1+y;
+                    break;
+                case 1: fieldResource[x][y].imageId+=2+y;
+                    break;
+                case 2: fieldResource[x][y].imageId+=3+y;
+                    break;
+                case 3: fieldResource[x][y].imageId+=4+y;
+                    break;
+                case 4: fieldResource[x][y].imageId+=5+y;
+                    break;
+                case 5: fieldResource[x][y].imageId+=6+y;
+                    break;
+            }
+            fieldResource[x][y].imageId %= numberOfIcons;
+        }
+        else {
+            fieldResource[x][y].imageId = fieldResource[x][y-(int)fieldResource[x][y].isShiftedFlag].imageId;
         }
     }
 
