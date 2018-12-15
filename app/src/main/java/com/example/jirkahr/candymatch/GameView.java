@@ -119,11 +119,11 @@ public class GameView extends View {
         int verti = 0;
 
         for (int y = 0; y < fieldHeight; y++) {
-            //horiz =  new int[]{0};
+            horiz = null;
             foundx = -1;
             for (int x = 0; x < fieldWidth; x++) {
                 mainImageId = fieldResource[x][y].imageId;
-                if(foundx == -1) {
+                if(foundx < 0) {
                     if (x <=4 && fieldResource[x + 1][y].imageId == mainImageId) {
                         if (x <= 3 && fieldResource[x + 2][y].imageId == mainImageId) {
                             if (x <= 2 && fieldResource[x + 3][y].imageId == mainImageId) {
@@ -167,7 +167,7 @@ public class GameView extends View {
                 }
             }
             //ted je pro kazdy raadek
-            if(foundx > 0 && horiz!=null){
+            if(foundx >= 0){
                 shiftThemHorizontally(horiz, foundx, y);
             }
 
@@ -225,7 +225,7 @@ public class GameView extends View {
 */
     void shiftThemVertically(int temVertically, int mainx, int mainy) {
         for(int y = mainy + temVertically - 1; y >=0; y--) {
-            fieldResource[mainx][y].isShiftedFlag += 1+temVertically;
+            fieldResource[mainx][y].isShiftedFlag += temVertically;
 
             if(y<fieldResource[mainx][y].isShiftedFlag) {
                 switch(mainx){
