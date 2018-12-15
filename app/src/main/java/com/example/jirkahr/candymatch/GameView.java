@@ -26,16 +26,18 @@ public class GameView extends View {
     int origIndexx = 1;
     int origIndexy = 1;
 
+    int numberOfIcons = 4;
+
     int candyWidth = 215;
     int candyHeight = 215;
 
     Candy[][] fieldResource = new Candy[][]{
-            { new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0)},
-            { new Candy(1, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(0, 0, 0)},
-            { new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0)},
-            { new Candy(1, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(0, 0, 0)},
-            { new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0)},
-            { new Candy(1, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(0, 0, 0)}
+            { new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(2, 0, 0), new Candy(3, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0)},
+            { new Candy(1, 0, 0), new Candy(2, 0, 0), new Candy(3, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(2, 0, 0)},
+            { new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(2, 0, 0), new Candy(3, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0)},
+            { new Candy(1, 0, 0), new Candy(2, 0, 0), new Candy(3, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(2, 0, 0)},
+            { new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(2, 0, 0), new Candy(3, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0)},
+            { new Candy(1, 0, 0), new Candy(2, 0, 0), new Candy(3, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(2, 0, 0)}
     };
 
     int fieldWidth = fieldResource[0].length;
@@ -62,9 +64,11 @@ public class GameView extends View {
     }
 
     void init(Context context) {
-        bmp = new Bitmap[2];
-        bmp[0] = BitmapFactory.decodeResource(getResources(), R.drawable.blue_dot);
-        bmp[1] = BitmapFactory.decodeResource(getResources(), R.drawable.red_dot);
+        bmp = new Bitmap[numberOfIcons];
+        bmp[0] = BitmapFactory.decodeResource(getResources(), R.drawable.icon_wood);
+        bmp[1] = BitmapFactory.decodeResource(getResources(), R.drawable.icon_gold);
+        bmp[2] = BitmapFactory.decodeResource(getResources(), R.drawable.icon_crystal);
+        bmp[3] = BitmapFactory.decodeResource(getResources(), R.drawable.icon_stone);
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -101,43 +105,76 @@ public class GameView extends View {
                 fieldResource[origIndexx][origIndexy].imageId = fieldResource[indexx][indexy].imageId;
                 fieldResource[indexx][indexy].imageId = tempimageId;
                 //shift(indexx,indexy);
-                shiftFlat();
+                shiftStraight();
                 invalidate();
                 break;
         }
         return true;
     }
 
-    void shiftFlat() {
+    void shiftStraight() {
         int mainImageId;
+        int[] horiz = null;
+        int foundx;
+        int verti = 0;
+
         for (int y = 0; y < fieldHeight; y++) {
-            for (int x = 0; x < fieldWidth-2; x++) {
+            //horiz =  new int[]{0};
+            foundx = -1;
+            for (int x = 0; x < fieldWidth; x++) {
                 mainImageId = fieldResource[x][y].imageId;
-                if(fieldResource[x+1][y].imageId==mainImageId) {
-                    if(fieldResource[x+2][y].imageId==mainImageId) {
-                        if(x<=2 && fieldResource[x+3][y].imageId==mainImageId) {
-                            if(x<=1 && fieldResource[x+4][y].imageId==mainImageId) {
-                                if(x==0 && fieldResource[x+5][y].imageId==mainImageId){
-                                    shiftThem(new int[]{0,1,2,3,4,5}, x, y);
+                if(foundx == -1) {
+                    if (x <=4 && fieldResource[x + 1][y].imageId == mainImageId) {
+                        if (x <= 3 && fieldResource[x + 2][y].imageId == mainImageId) {
+                            if (x <= 2 && fieldResource[x + 3][y].imageId == mainImageId) {
+                                if (x <= 1 && fieldResource[x + 4][y].imageId == mainImageId) {
+                                    if (x == 0 && fieldResource[x + 5][y].imageId == mainImageId) {
+                                        horiz = new int[]{0, 1, 2, 3, 4, 5};
+                                    } else {
+                                        horiz = new int[]{0, 1, 2, 3, 4};
+                                    }
+                                } else {
+                                    horiz = new int[]{0, 1, 2, 3};
+                                }
+                            } else {
+                                horiz = new int[]{0, 1, 2};
+                            }
+                            foundx = x;
+                        }
+                    }
+                }
+                if(y<=4 && fieldResource[x][y+1].imageId==mainImageId) {
+                    if(y<=3 && fieldResource[x][y+2].imageId==mainImageId) {
+                        if(y<=2 && fieldResource[x][y+3].imageId==mainImageId) {
+                            if(y<=1 && fieldResource[x][y+4].imageId==mainImageId) {
+                                if(y==0 && fieldResource[x][y+5].imageId==mainImageId){
+                                    verti = 6;
                                 }
                                 else {
-                                    shiftThem(new int[]{0,1,2,3,4}, x, y);
+                                    verti = 5;
                                 }
                             }
                             else {
-                                shiftThem(new int[]{0,1,2,3}, x, y);
+                                verti = 4;
                             }
                         }
                         else {
-                            shiftThem(new int[]{0,1,2}, x, y);
+                            verti = 3;
                         }
-                        break;
+                        //pro kazdou ikonku
+                        shiftThemVertically(verti, x, y);
                     }
                 }
             }
+            //ted je pro kazdy raadek
+            if(foundx > 0 && horiz!=null){
+                shiftThemHorizontally(horiz, foundx, y);
+            }
+
+
         }
     }
-
+/*
     void shift(int mainx, int mainy) {
         int mainImageId = fieldResource[mainx][mainy].imageId;
         boolean l2=false,l1=false,r1=false,r2=false;
@@ -185,23 +222,59 @@ public class GameView extends View {
         }
 
     }
+*/
+    void shiftThemVertically(int temVertically, int mainx, int mainy) {
+        for(int y = mainy + temVertically - 1; y >=0; y--) {
+            fieldResource[mainx][y].isShiftedFlag += 1+temVertically;
 
-    void shiftThem(int[] tem, int mainx, int mainy) {
+            if(y<fieldResource[mainx][y].isShiftedFlag) {
+                switch(mainx){
+                    case 0: fieldResource[mainx][y].imageId+=1+y;
+                        break;
+                    case 1: fieldResource[mainx][y].imageId+=2+y;
+                        break;
+                    case 2: fieldResource[mainx][y].imageId+=3+y;
+                        break;
+                    case 3: fieldResource[mainx][y].imageId+=4+y;
+                        break;
+                    case 4: fieldResource[mainx][y].imageId+=5+y;
+                        break;
+                    case 5: fieldResource[mainx][y].imageId+=6+y;
+                        break;
+                }
+                fieldResource[mainx][y].imageId %= numberOfIcons;
+            }
+            else {
+                fieldResource[mainx][y].imageId = fieldResource[mainx][y-(int)fieldResource[mainx][y].isShiftedFlag].imageId;
+            }
+        }
+    }
+
+    void shiftThemHorizontally(int[] temHoriz, int mainx, int mainy) {
         for(int y = mainy; y >= 0; y--){
-            for(int t:tem) {
+            for(int t:temHoriz){
                 fieldResource[mainx + t][y].isShiftedFlag += 1;
-
+                /*
                 if(fieldResource[mainx + t][y].isShiftedFlag >= 3){
                     fieldResource[mainx + t][y].isShiftedFlag = 3;
                 }
-
+                */
                 if(y<fieldResource[mainx + t][y].isShiftedFlag) {
-                    if(fieldResource[mainx + t][y].imageId == 0) {
-                        fieldResource[mainx + t][y].imageId = 1;
+                    switch(t){
+                        case 0: fieldResource[mainx + t][y].imageId+=1;
+                                break;
+                        case 1: fieldResource[mainx + t][y].imageId+=2;
+                            break;
+                        case 2: fieldResource[mainx + t][y].imageId+=3;
+                            break;
+                        case 3: fieldResource[mainx + t][y].imageId+=4;
+                            break;
+                        case 4: fieldResource[mainx + t][y].imageId+=5;
+                            break;
+                        case 5: fieldResource[mainx + t][y].imageId+=6;
+                            break;
                     }
-                    else {
-                        fieldResource[mainx + t][y].imageId = 0;
-                    }
+                    fieldResource[mainx + t][y].imageId %= numberOfIcons;
                 }
                 else {
                     fieldResource[mainx + t][y].imageId = fieldResource[mainx + t][y-(int)fieldResource[mainx + t][y].isShiftedFlag].imageId;
@@ -217,6 +290,7 @@ public class GameView extends View {
         int movingX = -1;
         int movingY = -1;
         boolean inv = false;
+        boolean check = true;
 
         for (int y = 0; y < fieldHeight; y++) {
             for (int x = 0; x < fieldWidth; x++) {
@@ -231,7 +305,7 @@ public class GameView extends View {
 
                 if(fieldResource[x][y].isShiftedFlag>0) {
                     fieldResource[x][y].isShiftedFlag -= 0.05;
-                    inv = true;
+                    check = false;
                 }
                 else {
                     fieldResource[x][y].isShiftedFlag = 0;
@@ -243,7 +317,7 @@ public class GameView extends View {
                     new Rect(posx - candyWidth, posy - candyHeight, posx + candyWidth, posy + candyHeight), null);
         }
 
-        if(!inv) {
+        if(check) {
             /*
             for (int y = 0; y < fieldHeight; y++) {
                 for (int x = 1; x < fieldWidth-1; x++) {
@@ -254,12 +328,10 @@ public class GameView extends View {
                 }
             }
             */
-            shiftFlat();
+            shiftStraight();
         }
 
-        if(inv) {
-            invalidate();
-        }
+        invalidate();
     }
 }
 
