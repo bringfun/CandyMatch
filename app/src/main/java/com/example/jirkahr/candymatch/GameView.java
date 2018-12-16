@@ -2,6 +2,7 @@ package com.example.jirkahr.candymatch;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -33,15 +34,19 @@ public class GameView extends View {
     int candyWidth = 215;
     int candyHeight = 215;
 
+    Context context = getContext();
+
     private TextView woodScore;
     private TextView goldScore;
     private TextView crystalScore;
     private TextView stoneScore;
+    private TextView movesLeftView;
 
     private int scoredWood = 0;
     private int scoredGold = 0;
     private int scoredCrystal = 0;
     private int scoredStone = 0;
+    private int movesLeft = 20;
 
 
     Candy[][] fieldResource = new Candy[][]{
@@ -114,11 +119,14 @@ public class GameView extends View {
 
                 fieldResource[origIndexx][origIndexy].isMovingFlag = 0;
 
-                tempimageId = fieldResource[origIndexx][origIndexy].imageId;
-                fieldResource[origIndexx][origIndexy].imageId = fieldResource[indexx][indexy].imageId;
-                fieldResource[indexx][indexy].imageId = tempimageId;
-                //shift(indexx,indexy);
-                shiftStraight();
+                if(indexx != origIndexx || indexy != origIndexy) {
+                    tempimageId = fieldResource[origIndexx][origIndexy].imageId;
+                    fieldResource[origIndexx][origIndexy].imageId = fieldResource[indexx][indexy].imageId;
+                    fieldResource[indexx][indexy].imageId = tempimageId;
+                    movesLeft--;
+                    movesLeftView.setText(Integer.toString(movesLeft));
+                    shiftStraight();
+                }
                 invalidate();
                 break;
         }
@@ -189,19 +197,19 @@ public class GameView extends View {
                         }
                         //pro kazdou ikonku
                         shiftThemVertically(verti, x, y);
-                        setTexts(mainImageId, scoredVerti, false);
+                        setTexts(mainImageId, scoredVerti);
                     }
                 }
             }
             //ted je pro kazdy raadek
             if(foundx >= 0){
                 shiftThemHorizontally(horiz, foundx, y);
-                setTexts(mainImageIdHoriz, scoredHoriz, true);
+                setTexts(mainImageIdHoriz, scoredHoriz);
             }
         }
     }
 
-    void setTexts(int imageId, int scored, boolean isHoriz) {
+    void setTexts(int imageId, int scored) {
         switch (imageId){
             case 0:
                 scoredWood += scored;
@@ -313,9 +321,9 @@ public class GameView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         //canvas.drawColor(Color.WHITE);
+        movesLeftView.setText(Integer.toString(movesLeft));
         int movingX = -1;
         int movingY = -1;
-        boolean inv = false;
         boolean check = true;
 
         for (int y = 0; y < fieldHeight; y++) {
@@ -344,21 +352,35 @@ public class GameView extends View {
         }
 
         if(check) {
-            /*
-            for (int y = 0; y < fieldHeight; y++) {
-                for (int x = 1; x < fieldWidth-1; x++) {
-                    if(fieldResource[x][y].isShiftedFlag == 0) {
-                        shift(x,y);
-                        invalidate();
-                    }
-                }
+            if(scoredWood >= 1000 && scoredGold >= 1000 && scoredCrystal >= 1000 && scoredStone >= 1000) {
+                Intent intent = new Intent(context, Cleared.class);
+                intent.putExtra("TOTAL_SCORE", scoredWood+scoredGold+scoredCrystal+scoredStone);
+                context.startActivity(intent);
             }
-            */
+            else if(movesLeft <= 0) {
+                Intent intent = new Intent(context, GameOver.class);
+                intent.putExtra("TOTAL_SCORE", scoredWood+scoredGold+scoredCrystal+scoredStone);
+                context.startActivity(intent);
+            }
+
             shiftStraight();
         }
 
+        Sleep.run();
         invalidate();
     }
+
+    Thread Sleep = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(5);
+            }
+            catch (Exception e) {
+                e.getLocalizedMessage();
+            }
+        }
+    });
 
     public void setWoodScore(TextView woodScore) {
         this.woodScore = woodScore;
@@ -374,6 +396,10 @@ public class GameView extends View {
 
     public void setStoneScore(TextView stoneScore) {
         this.stoneScore = stoneScore;
+    }
+
+    public void setMovesLeftView(TextView movesLeftView) {
+        this.movesLeftView = movesLeftView;
     }
 }
 

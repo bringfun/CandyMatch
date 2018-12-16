@@ -98,4 +98,26 @@
         app:layout_constraintStart_toEndOf="@+id/stoneLabel"
         app:layout_constraintTop_toBottomOf="@+id/crystalScore" />
 
+    <TextView
+        android:id="@+id/movesLeftView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:layout_marginBottom="28dp"
+        android:text="0"
+        android:textSize="46sp"
+        app:layout_constraintBottom_toTopOf="@+id/gameView"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/leftLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:layout_marginBottom="8dp"
+        android:text="moves left:"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/movesLeftView"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </android.support.constraint.ConstraintLayout>

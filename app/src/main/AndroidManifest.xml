@@ -16,7 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".GameBoard"></activity>
+        <activity android:name=".GameBoard" />
+        <activity android:name=".Cleared" />
+        <activity android:name=".GameOver"></activity>
     </application>
 
 </manifest>
