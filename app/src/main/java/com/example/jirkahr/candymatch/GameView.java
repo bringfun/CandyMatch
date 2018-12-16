@@ -11,6 +11,8 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.os.Bundle;
+import android.widget.TextView;
 
 public class GameView extends View {
 
@@ -30,6 +32,17 @@ public class GameView extends View {
 
     int candyWidth = 215;
     int candyHeight = 215;
+
+    private TextView woodScore;
+    private TextView goldScore;
+    private TextView crystalScore;
+    private TextView stoneScore;
+
+    private int scoredWood = 0;
+    private int scoredGold = 0;
+    private int scoredCrystal = 0;
+    private int scoredStone = 0;
+
 
     Candy[][] fieldResource = new Candy[][]{
             { new Candy(0, 0, 0), new Candy(1, 0, 0), new Candy(2, 0, 0), new Candy(3, 0, 0), new Candy(0, 0, 0), new Candy(1, 0, 0)},
@@ -121,7 +134,10 @@ public class GameView extends View {
         for (int y = 0; y < fieldHeight; y++) {
             horiz = null;
             foundx = -1;
+            int scoredHoriz = 0;
+            int mainImageIdHoriz = 0;
             for (int x = 0; x < fieldWidth; x++) {
+                int scoredVerti = 0;
                 mainImageId = fieldResource[x][y].imageId;
                 if(foundx < 0) {
                     if (x <=4 && fieldResource[x + 1][y].imageId == mainImageId) {
@@ -130,16 +146,22 @@ public class GameView extends View {
                                 if (x <= 1 && fieldResource[x + 4][y].imageId == mainImageId) {
                                     if (x == 0 && fieldResource[x + 5][y].imageId == mainImageId) {
                                         horiz = new int[]{0, 1, 2, 3, 4, 5};
+                                        scoredHoriz = 600;
+
                                     } else {
                                         horiz = new int[]{0, 1, 2, 3, 4};
+                                        scoredHoriz = 500;
                                     }
                                 } else {
                                     horiz = new int[]{0, 1, 2, 3};
+                                    scoredHoriz = 400;
                                 }
                             } else {
                                 horiz = new int[]{0, 1, 2};
+                                scoredHoriz = 300;
                             }
                             foundx = x;
+                            mainImageIdHoriz = mainImageId;
                         }
                     }
                 }
@@ -149,29 +171,54 @@ public class GameView extends View {
                             if(y<=1 && fieldResource[x][y+4].imageId==mainImageId) {
                                 if(y==0 && fieldResource[x][y+5].imageId==mainImageId){
                                     verti = 6;
+                                    scoredVerti = 600;
                                 }
                                 else {
                                     verti = 5;
+                                    scoredVerti = 500;
                                 }
                             }
                             else {
                                 verti = 4;
+                                scoredVerti = 400;
                             }
                         }
                         else {
                             verti = 3;
+                            scoredVerti = 300;
                         }
                         //pro kazdou ikonku
                         shiftThemVertically(verti, x, y);
+                        setTexts(mainImageId, scoredVerti, false);
                     }
                 }
             }
             //ted je pro kazdy raadek
             if(foundx >= 0){
                 shiftThemHorizontally(horiz, foundx, y);
+                setTexts(mainImageIdHoriz, scoredHoriz, true);
             }
+        }
+    }
 
-
+    void setTexts(int imageId, int scored, boolean isHoriz) {
+        switch (imageId){
+            case 0:
+                scoredWood += scored;
+                woodScore.setText(Integer.toString(scoredWood));
+                break;
+            case 1:
+                scoredGold += scored;
+                goldScore.setText(Integer.toString(scoredGold));
+                break;
+            case 2:
+                scoredCrystal += scored;
+                crystalScore.setText(Integer.toString(scoredCrystal));
+                break;
+            case 3:
+                scoredStone += scored;
+                stoneScore.setText(Integer.toString(scoredStone));
+                break;
         }
     }
 /*
@@ -311,6 +358,22 @@ public class GameView extends View {
         }
 
         invalidate();
+    }
+
+    public void setWoodScore(TextView woodScore) {
+        this.woodScore = woodScore;
+    }
+
+    public void setGoldScore(TextView goldScore) {
+        this.goldScore = goldScore;
+    }
+
+    public void setCrystalScore(TextView crystalScore) {
+        this.crystalScore = crystalScore;
+    }
+
+    public void setStoneScore(TextView stoneScore) {
+        this.stoneScore = stoneScore;
     }
 }
 
