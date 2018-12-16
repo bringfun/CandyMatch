@@ -18,7 +18,10 @@ public class MainMenu extends AppCompatActivity {
     private Button level2btn;
     private Button level3btn;
     private SharedPreferences mySharedPref;
+    private SharedPreferences.Editor mySharedEditor;
     private int level = 0;
+    private boolean initialized = false;
+    private SQLHelper myDbHelper;
 
 
     @Override
@@ -35,6 +38,12 @@ public class MainMenu extends AppCompatActivity {
         level1btn.setOnClickListener(buttonListener);
         level2btn.setOnClickListener(buttonListener);
         level3btn.setOnClickListener(buttonListener);
+        myDbHelper = new SQLHelper(this);
+
+        initialized = mySharedPref.getBoolean("initialized", false);
+        if(!initialized) {
+            this.initializeSQL();
+        }
     }
 
     View.OnClickListener buttonListener = new View.OnClickListener() {
@@ -74,10 +83,6 @@ public class MainMenu extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        /*
-        Intent intent = new Intent(MainMenu.this, GameBoard.class);
-        startActivity(intent);
-        */
     }
 
     @Override
@@ -85,6 +90,16 @@ public class MainMenu extends AppCompatActivity {
         super.onPause();
         mediaPlayer.stop();
         mediaPlayer.release();
+    }
 
+    private void initializeSQL() {
+        myDbHelper.insertData(1, 10, 500, 500, 500, 500);
+        myDbHelper.insertData(2, 20, 1000, 1000, 1000, 1000);
+        myDbHelper.insertData(3, 30, 1500, 1500, 1500, 1500);
+        myDbHelper.insertData(4, 40, 2000, 2000, 2000, 2000);
+
+        mySharedEditor = mySharedPref.edit();
+        mySharedEditor.putBoolean("initialized", true);
+        mySharedEditor.commit();
     }
 }

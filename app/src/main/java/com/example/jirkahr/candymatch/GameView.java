@@ -3,6 +3,7 @@ package com.example.jirkahr.candymatch;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -48,8 +49,13 @@ public class GameView extends View {
     private int scoredStone = 0;
     private int level = 1;
     private int movesLeft = 20;
+    private int woodTarget = 500;
+    private int goldTarget = 500;
+    private int crystalTarget = 500;
+    private int stoneTarget = 500;
 
     MyThread myThread;
+    SQLHelper myDbHelper;
 
 
     Candy[][] fieldResource = new Candy[][]{
@@ -92,6 +98,8 @@ public class GameView extends View {
         bmp[3] = BitmapFactory.decodeResource(getResources(), R.drawable.icon_stone);
 
         myThread = new MyThread();
+        myDbHelper = new SQLHelper(context);
+
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -357,7 +365,7 @@ public class GameView extends View {
         }
 
         if(check) {
-            if(scoredWood >= 1000 && scoredGold >= 1000 && scoredCrystal >= 1000 && scoredStone >= 1000) {
+            if(scoredWood >= woodTarget && scoredGold >= goldTarget && scoredCrystal >= crystalTarget && scoredStone >= stoneTarget) {
                 Intent intent = new Intent(context, Cleared.class);
                 intent.putExtra("TOTAL_SCORE", scoredWood+scoredGold+scoredCrystal+scoredStone);
                 intent.putExtra("WOOD", scoredWood);
@@ -402,6 +410,9 @@ public class GameView extends View {
 
     public void setLevel(int level) {
         this.level = level;
+
+        loadDbInfo();
+        /*
         switch (level) {
             case 1:
                 this.movesLeft = 25;
@@ -412,6 +423,20 @@ public class GameView extends View {
             case 3:
                 this.movesLeft = 30;
                 break;
+        }
+        */
+    }
+
+    void loadDbInfo() {
+        Cursor data = myDbHelper.selectData();
+        while(data.moveToNext()) {
+            if(data.getInt(0)==this.level) {
+                this.movesLeft = data.getInt(1);
+                this.woodTarget = data.getInt(2);
+                this.goldTarget = data.getInt(3);
+                this.crystalTarget = data.getInt(4);
+                this.stoneTarget = data.getInt(5);
+            }
         }
     }
 }
