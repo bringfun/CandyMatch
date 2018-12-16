@@ -46,7 +46,10 @@ public class GameView extends View {
     private int scoredGold = 0;
     private int scoredCrystal = 0;
     private int scoredStone = 0;
+    private int level = 1;
     private int movesLeft = 20;
+
+    MyThread myThread;
 
 
     Candy[][] fieldResource = new Candy[][]{
@@ -87,6 +90,8 @@ public class GameView extends View {
         bmp[1] = BitmapFactory.decodeResource(getResources(), R.drawable.icon_gold);
         bmp[2] = BitmapFactory.decodeResource(getResources(), R.drawable.icon_crystal);
         bmp[3] = BitmapFactory.decodeResource(getResources(), R.drawable.icon_stone);
+
+        myThread = new MyThread();
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -355,6 +360,11 @@ public class GameView extends View {
             if(scoredWood >= 1000 && scoredGold >= 1000 && scoredCrystal >= 1000 && scoredStone >= 1000) {
                 Intent intent = new Intent(context, Cleared.class);
                 intent.putExtra("TOTAL_SCORE", scoredWood+scoredGold+scoredCrystal+scoredStone);
+                intent.putExtra("WOOD", scoredWood);
+                intent.putExtra("GOLD", scoredGold);
+                intent.putExtra("CRYSTAL", scoredCrystal);
+                intent.putExtra("STONE", scoredStone);
+                intent.putExtra("LEVEL", level);
                 context.startActivity(intent);
             }
             else if(movesLeft <= 0) {
@@ -366,21 +376,9 @@ public class GameView extends View {
             shiftStraight();
         }
 
-        Sleep.run();
+        myThread.sleep(5);
         invalidate();
     }
-
-    Thread Sleep = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            try {
-                Thread.sleep(5);
-            }
-            catch (Exception e) {
-                e.getLocalizedMessage();
-            }
-        }
-    });
 
     public void setWoodScore(TextView woodScore) {
         this.woodScore = woodScore;
@@ -400,6 +398,21 @@ public class GameView extends View {
 
     public void setMovesLeftView(TextView movesLeftView) {
         this.movesLeftView = movesLeftView;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+        switch (level) {
+            case 1:
+                this.movesLeft = 25;
+                break;
+            case 2:
+                this.movesLeft = 10;
+                break;
+            case 3:
+                this.movesLeft = 30;
+                break;
+        }
     }
 }
 

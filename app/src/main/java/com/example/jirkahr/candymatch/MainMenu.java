@@ -12,9 +12,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class MainMenu extends AppCompatActivity {
-    MediaPlayer mediaPlayer;
-    Dialog levelDetailDialog;
-    SharedPreferences mySharedPref;
+    private MediaPlayer mediaPlayer;
+    private Dialog levelDetailDialog;
+    private Button level1btn;
+    private Button level2btn;
+    private Button level3btn;
+    private SharedPreferences mySharedPref;
+    private int level = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,20 +29,48 @@ public class MainMenu extends AppCompatActivity {
         mediaPlayer.start();
         mySharedPref = getSharedPreferences("myPref",Context.MODE_PRIVATE);
         levelDetailDialog = new Dialog(this);
+        level1btn = findViewById(R.id.level1btn);
+        level2btn = findViewById(R.id.level2btn);
+        level3btn = findViewById(R.id.level3btn);
+        level1btn.setOnClickListener(buttonListener);
+        level2btn.setOnClickListener(buttonListener);
+        level3btn.setOnClickListener(buttonListener);
     }
 
-    void openlevel1(View view) {
+    View.OnClickListener buttonListener = new View.OnClickListener() {
+        @Override
+        public void onClick (View v) {
+            if(v == level1btn) {
+                level = 1;
+                openDetail();
+            }
+            else if(v == level2btn) {
+                level = 2;
+                openDetail();
+            }
+            else if(v == level3btn) {
+                level = 3;
+                openDetail();
+            }
+        }
+    };
+
+    void openDetail() {
+        TextView levelLabel;
         TextView scoreView;
         Button playBtn;
         levelDetailDialog.setContentView(R.layout.leveldetailpopup);
         levelDetailDialog.show();
+        levelLabel = levelDetailDialog.findViewById(R.id.levelLabel);
         scoreView = levelDetailDialog.findViewById(R.id.scoreDetail);
         playBtn = levelDetailDialog.findViewById(R.id.playLevelBtn);
-        scoreView.setText(Integer.toString(mySharedPref.getInt("level1HighScore",0)));
+        levelLabel.setText("Level "+level);
+        scoreView.setText(Integer.toString(mySharedPref.getInt("level"+level+"HighScore",0)));
         playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainMenu.this, GameBoard.class);
+                intent.putExtra("LEVEL", level);
                 startActivity(intent);
             }
         });
